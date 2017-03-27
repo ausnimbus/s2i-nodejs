@@ -8,7 +8,7 @@ ENV STI_SCRIPTS_PATH=/usr/libexec/s2i \
 
 LABEL io.openshift.s2i.scripts-url=image:///usr/libexec/s2i
 
-RUN apk add --update bash python && rm -rf /var/cache/apk/* && \
+RUN apk add --update bash python git && rm -rf /var/cache/apk/* && \
     mkdir -p ${HOME}/.pki/nssdb && \
     chown -R 1001:0 ${HOME}/.pki && \
     adduser -S -u 1001 -G root -h ${HOME} -s /sbin/nologin \
