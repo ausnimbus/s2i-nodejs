@@ -7,14 +7,11 @@
 # The image has to be available before this script is executed.
 #
 IMAGE_NAME=${IMAGE_NAME-ausnimbus/s2i-nodejs:4}
+S2I_ARGS=${S2I_ARGS:-""}
 
 test_dir="$(readlink -zf $(dirname "${BASH_SOURCE[0]}"))"
 image_dir=$(readlink -zf ${test_dir}/..)
 cid_file=$(mktemp -u --suffix=.cid)
-
-# Since we built the candidate image locally, we don't want S2I attempt to pull
-# it from Docker hub
-s2i_args="--force-pull=false "
 
 # TODO: This should be part of the image metadata
 test_port=8080
@@ -40,7 +37,7 @@ container_logs() {
 }
 
 run_s2i_build() {
-  s2i build ${s2i_args} file://${test_dir}/test-app ${IMAGE_NAME} ${IMAGE_NAME}-testapp
+  s2i build ${S2I_ARGS} file://${test_dir}/test-app ${IMAGE_NAME} ${IMAGE_NAME}-testapp
 }
 
 prepare() {
@@ -97,7 +94,7 @@ wait_for_cid() {
 
 test_s2i_usage() {
   echo "Testing 's2i usage'..."
-  s2i usage ${s2i_args} ${IMAGE_NAME} &>/dev/null
+  s2i usage ${S2I_ARGS} ${IMAGE_NAME} &>/dev/null
 }
 
 test_docker_run_usage() {
