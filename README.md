@@ -19,6 +19,6 @@ If you are interested in using SCL-based nodejs binaries, use [s2i-scl-nodejs](h
 
 The versions currently supported are:
 
-- 4.8
-- 6.10
-- 7.7
+- 4.8.2
+- 6.10.2
+- 7.8.0
