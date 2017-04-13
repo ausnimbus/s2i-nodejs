@@ -2,13 +2,11 @@
 
 set -e
 
-# Runs the nodejs application server. If the container is run in development mode,
-# hot deploy and debugging are enabled.
 run_node() {
   echo -e "Environment: \n\tDEV_MODE=${DEV_MODE}\n\tNODE_ENV=${NODE_ENV}\n\tDEBUG_PORT=${DEBUG_PORT}"
-  if [ "$DEV_MODE" == true ]; then
-    echo "Launching via nodemon..."
-    exec nodemon --debug="$DEBUG_PORT"
+  if [ -f "yarn.lock" ]; then
+    echo "Launching via yarn..."
+    exec yarn run $NPM_RUN
   else
     echo "Launching via npm..."
     exec npm run -d $NPM_RUN
