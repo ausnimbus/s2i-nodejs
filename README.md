@@ -9,6 +9,8 @@ on [AusNimbus](https://www.ausnimbus.com.au/).
 
 The builders are built using NodeJS binaries from nodejs.org
 
+The Yarn package manager is included and will be used over NPM if a `yarn.lock` file exists.
+
 If you are interested in using SCL-based NodeJS binaries, use [s2i-nodejs-scl](https://github.com/ausnimbus/s2i-nodejs-scl)
 ## Versions
 
@@ -16,4 +18,4 @@ The versions currently supported are:
 
 - 4.8.2
 - 6.10.2
-- 7.8.0
+- 7.9.0
