@@ -4,7 +4,12 @@ set -e
 
 run_node() {
   echo -e "Environment: \n\tDEV_MODE=${DEV_MODE}\n\tNODE_ENV=${NODE_ENV}\n\tDEBUG_PORT=${DEBUG_PORT}"
-  if [ -f "yarn.lock" ]; then
+  if [ "$DEV_MODE" == true ]; then
+    echo "Installing nodemon..."
+    npm install nodemon
+    echo "Launching via nodemon..."
+    exec nodemon --debug="$DEBUG_PORT"
+  elif [ -f "yarn.lock" ]; then
     echo "Launching via yarn..."
     exec yarn run $NPM_RUN
   else
@@ -13,15 +18,9 @@ run_node() {
   fi
 }
 
-#Set the debug port to 5858 by default.
-if [ -z "$DEBUG_PORT" ]; then
-  export DEBUG_PORT=5858
-fi
-
-# Set the environment to development by default.
-if [ -z "$DEV_MODE" ]; then
-  export DEV_MODE=false
-fi
+# Set the debug port and development environment
+export DEBUG_PORT=${DEBUG_PORT:-"5858"}
+export DEV_MODE=${DEV_MODE:-"false"}
 
 # If NODE_ENV is not set by the user, then NODE_ENV is determined by whether
 # the container is run in development mode.
@@ -32,8 +31,5 @@ if [ -z "$NODE_ENV" ]; then
     export NODE_ENV=production
   fi
 fi
-
-# Allow users to inspect/debug the builder image itself
-[ "$1" == "--inspect" ] && exec /bin/bash
 
 run_node
