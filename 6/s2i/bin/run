@@ -1,35 +1,16 @@
-#!/bin/bash
+#!/bin/bash -e
+source /opt/app-root/etc/node_environment
 
-set -e
-
-run_node() {
-  echo -e "Environment: \n\tDEV_MODE=${DEV_MODE}\n\tNODE_ENV=${NODE_ENV}\n\tDEBUG_PORT=${DEBUG_PORT}"
-  if [ "$DEV_MODE" == true ]; then
-    echo "Installing nodemon..."
-    npm install nodemon
-    echo "Launching via nodemon..."
-    exec nodemon --debug="$DEBUG_PORT"
-  elif [ -f "yarn.lock" ]; then
-    echo "Launching via yarn..."
-    exec yarn run $NPM_RUN
-  else
-    echo "Launching via npm..."
-    exec npm run -d $NPM_RUN
-  fi
-}
-
-# Set the debug port and development environment
-export DEBUG_PORT=${DEBUG_PORT:-"5858"}
-export DEV_MODE=${DEV_MODE:-"false"}
-
-# If NODE_ENV is not set by the user, then NODE_ENV is determined by whether
-# the container is run in development mode.
-if [ -z "$NODE_ENV" ]; then
-  if [ "$DEV_MODE" == true ]; then
-    export NODE_ENV=development
-  else
-    export NODE_ENV=production
-  fi
+echo -e "Environment: \n\tDEV_MODE=${DEV_MODE}\n\tNODE_ENV=${NODE_ENV}\n\tDEBUG_PORT=${DEBUG_PORT}"
+if [ "$DEV_MODE" == true ]; then
+  echo "Installing nodemon..."
+  npm install nodemon
+  echo "Launching via nodemon..."
+  exec nodemon --debug="$DEBUG_PORT"
+elif [ -f "yarn.lock" ]; then
+  echo "Launching via yarn..."
+  exec yarn run $NPM_RUN
+else
+  echo "Launching via npm..."
+  exec npm run -d $NPM_RUN
 fi
-
-run_node

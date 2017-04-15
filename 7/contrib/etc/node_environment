@@ -1,0 +1,13 @@
+# Set the debug port and development environment
+export DEBUG_PORT=${DEBUG_PORT:-"5858"}
+export DEV_MODE=${DEV_MODE:-"false"}
+
+# If NODE_ENV is not set by the user, then NODE_ENV is determined by whether
+# the container is run in development mode.
+if [ -z "$NODE_ENV" ]; then
+  if [ "$DEV_MODE" == true ]; then
+    export NODE_ENV=development
+  else
+    export NODE_ENV=production
+  fi
+fi
