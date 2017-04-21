@@ -7,10 +7,7 @@ if [ "$DEV_MODE" == true ]; then
   npm install nodemon
   echo "Launching via nodemon..."
   exec nodemon --debug="$DEBUG_PORT"
-elif [ -f "yarn.lock" ]; then
-  echo "Launching via yarn..."
-  exec yarn run $NPM_RUN
 else
-  echo "Launching via npm..."
+  echo "Launching..."
   exec npm run -d $NPM_RUN
 fi

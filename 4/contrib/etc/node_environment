@@ -1,3 +1,11 @@
+# Define the maximum memory limit (total_limit - 32MB)
+export_vars=$(cgroup-limits) ; export $export_vars
+if [ -f "yarn.lock" ]; then
+  alias npm='node --max_old_space_size=$((MEMORY_LIMIT_IN_BYTES/1000000-32)) yarn'
+else
+  alias npm='node --max_old_space_size=$((MEMORY_LIMIT_IN_BYTES/1000000-32)) npm'
+fi
+
 # Set the debug port and development environment
 export DEBUG_PORT=${DEBUG_PORT:-"5858"}
 export DEV_MODE=${DEV_MODE:-"false"}
