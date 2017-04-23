@@ -21,3 +21,7 @@ if [ -z "$NODE_ENV" ]; then
     export NODE_ENV=production
   fi
 fi
+
+# Initialized with "npm run $NPM_RUN"
+# See https://docs.npmjs.com/misc/scripts, and your repo's package.json
+export NPM_RUN=${NPM_RUN:-"start"}
