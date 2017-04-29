@@ -1,3 +1,9 @@
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "./hack/update"
+#
+# DO NOT EDIT IT DIRECTLY.
+#
+  
 FROM node:7-alpine
 MAINTAINER AusNimbus <support@ausnimbus.com.au>
 
@@ -14,7 +20,7 @@ LABEL summary="Platform for building and running Node.js 7 applications" \
     io.openshift.tags="builder,node" \
     io.openshift.s2i.scripts-url=image:///usr/libexec/s2i
 
-RUN apk add --update bash rsync git && rm -rf /var/cache/apk/* && \
+RUN apk --no-cache add bash rsync git && rm -rf /var/cache/apk/* && \
     mkdir -p ${HOME}/.pki/nssdb && \
     chown -R 1001:0 ${HOME}/.pki && \
     adduser -S -u 1001 -G root -h ${HOME} -s /sbin/nologin \
