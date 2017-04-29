@@ -1,0 +1,4 @@
+# Add $HOME/node_modules/.bin to the $PATH, allowing user to make npm scripts
+# available on the CLI without using npm's --global installation mode
+ENV NPM_CONFIG_PREFIX=$HOME/.npm-global \
+    PATH=$HOME/node_modules/.bin/:$HOME/.npm-global/bin/:$PATH

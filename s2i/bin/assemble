@@ -1,0 +1,44 @@
+#!/bin/bash -e
+source /opt/app-root/etc/node_environment
+
+shopt -s dotglob
+echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}"
+echo "---> Installing application source ..."
+mv /tmp/src/* ./
+
+if [ ! -z $HTTP_PROXY ]; then
+	echo "---> Setting npm http proxy to $HTTP_PROXY"
+	npm config set proxy $HTTP_PROXY
+fi
+
+if [ ! -z $http_proxy ]; then
+	echo "---> Setting npm http proxy to $http_proxy"
+	npm config set proxy $http_proxy
+fi
+
+if [ ! -z $HTTPS_PROXY ]; then
+	echo "---> Setting npm https proxy to $HTTPS_PROXY"
+	npm config set https-proxy $HTTPS_PROXY
+fi
+
+if [ ! -z $https_proxy ]; then
+	echo "---> Setting npm https proxy to $https_proxy"
+	npm config set https-proxy $https_proxy
+fi
+
+# Change the npm registry mirror if provided
+if [ -n "$NPM_MIRROR" ]; then
+	npm config set registry $NPM_MIRROR
+fi
+
+if [ -f "yarn.lock" ]; then
+	# npm is an alias
+	echo "---> Building your Node application from source (yarn)"
+	npm install --pure-lockfile --ignore-engines
+else
+	echo "---> Building your Node application from source (npm)"
+	npm install
+fi
+
+# Fix source directory permissions
+fix-permissions ./
