@@ -11,47 +11,10 @@ IMAGE_NAME=${IMAGE_NAME-ausnimbus/s2i-nodejs:7}
 VERSION=${VERSION-"7"}
 S2I_ARGS=${S2I_ARGS:-""}
 
-declare -a WEB_APPS=({echo,echo-yarn})
+TEST_APPS=({echo,echo-yarn})
+VERSION_COMMAND="node --version"
+EXTRA_TESTS="info 'Testing DEV_MODE=true' && \
+  CONTAINER_ARGS='-e DEV_MODE=true' test_application"
 
 test_dir="$(readlink -zf $(dirname "${BASH_SOURCE[0]}"))"
-image_dir=$(readlink -zf ${test_dir}/..)
-
-version_command="node --version"
-version_output=$VERSION
 source ${test_dir}/../common/tests/functions
-
-# Verify the 'usage' script is working properly when running the base image with 's2i usage ...'
-test_s2i_usage
-check_result $?
-
-# Verify the 'usage' script is working properly when running the base image with 'docker run ...'
-test_docker_run_usage
-
-for app in ${WEB_APPS[@]}; do
-  prepare ${app}
-  run_s2i_build ${app}
-  check_result $?
-
-  # test application with default user
-  test_application
-
-  info "Testing DEV_MODE=true"
-  CONTAINER_ARGS="-e DEV_MODE=true" test_application
-
-  info "Test with random user"
-  CONTAINER_ARGS="-u 12345" test_application
-
-  # Build the application image twice to ensure the 'save-artifacts' and
-  # 'restore-artifacts' scripts are working properly
-  info "Test incremental builds"
-  S2I_ARGS="--incremental" run_s2i_build ${app}
-  check_result $?
-  S2I_ARGS="--incremental" run_s2i_build ${app}
-  check_result $?
-  test_application
-
-  info "All tests for the ${app} finished successfully."
-  cleanup ${app}
-done
-
-info "All tests finished successfully."
