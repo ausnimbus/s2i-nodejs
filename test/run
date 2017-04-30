@@ -20,9 +20,6 @@ version_command="node --version"
 version_output=$VERSION
 source ${test_dir}/../common/tests/functions
 
-# TODO: This should be part of the image metadata
-test_port=8080
-
 # Verify the 'usage' script is working properly when running the base image with 's2i usage ...'
 test_s2i_usage
 check_result $?
@@ -49,8 +46,10 @@ for app in ${WEB_APPS[@]}; do
   info "Test incremental builds"
   S2I_ARGS="--incremental" run_s2i_build ${app}
   check_result $?
+  S2I_ARGS="--incremental" run_s2i_build ${app}
+  check_result $?
   test_application
-  
+
   info "All tests for the ${app} finished successfully."
   cleanup ${app}
 done

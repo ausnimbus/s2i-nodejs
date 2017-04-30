@@ -2,6 +2,12 @@
 source /opt/app-root/etc/node_environment
 
 shopt -s dotglob
+
+if [ -d /tmp/artifacts/ ]; then
+    echo "---> Restoring build artifacts..."
+    mv -v /tmp/artifacts/* ./
+fi
+
 echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}"
 echo "---> Installing application source ..."
 mv /tmp/src/* ./
