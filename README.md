@@ -38,7 +38,8 @@ The versions currently supported are:
 
 ## Hacking
 
-`hack/run` will build and test all images
+`hack/run build` will build and test all images
+`hack/run update` will update all Dockerfiles
 
 `docker-squash` is used to to squash the final image:
 
