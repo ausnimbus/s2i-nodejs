@@ -30,8 +30,6 @@ check_result $?
 # Verify the 'usage' script is working properly when running the base image with 'docker run ...'
 test_docker_run_usage
 
-# Build the application image twice to ensure the 'save-artifacts' and
-# 'restore-artifacts' scripts are working properly
 for app in ${WEB_APPS[@]}; do
   prepare ${app}
   run_s2i_build ${app}
@@ -46,6 +44,13 @@ for app in ${WEB_APPS[@]}; do
   info "Test with random user"
   CONTAINER_ARGS="-u 12345" test_application
 
+  # Build the application image twice to ensure the 'save-artifacts' and
+  # 'restore-artifacts' scripts are working properly
+  info "Test incremental builds"
+  S2I_ARGS="--incremental" run_s2i_build ${app}
+  check_result $?
+  test_application
+  
   info "All tests for the ${app} finished successfully."
   cleanup ${app}
 done
