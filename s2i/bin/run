@@ -1,7 +1,7 @@
 #!/bin/bash -e
 source /opt/app-root/etc/node_environment
 
-echo -e "Environment: \n\tDEV_MODE=${DEV_MODE}\n\tNODE_ENV=${NODE_ENV}\n\tDEBUG_PORT=${DEBUG_PORT}"
+echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tDEV_MODE=${DEV_MODE}\n\tDEBUG_PORT=${DEBUG_PORT}"
 if [ "$DEV_MODE" == true ]; then
   echo "Installing nodemon..."
   if [ -f "yarn.lock" ]; then

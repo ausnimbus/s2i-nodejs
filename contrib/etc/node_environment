@@ -4,19 +4,19 @@
 source cgroup-limits
 
 npm() {
-  # The v8 engine packaged with node 4 uses max_old_space_size
-  if [ ${NODE_VERSION:0:1} == "4" ]; then
-    NODE_ARGS=${NODE_ARGS:-"--max_old_space_size=$((MEMORY_LIMIT_IN_BYTES/1000000-32))"}
-  else
-    NODE_ARGS=${NODE_ARGS:-"--max-old-space-size=$((MEMORY_LIMIT_IN_BYTES/1000000-32))"}
-  fi
-
   if [ -f "yarn.lock" ]; then
     node "$NODE_ARGS" /usr/local/bin/yarn "$@"
   else
     node "$NODE_ARGS" /usr/local/bin/npm "$@"
   fi
 }
+
+# The v8 engine packaged with node4 uses max_old_space_size
+if [ ${NODE_VERSION:0:1} == "4" ]; then
+  export NODE_ARGS=${NODE_ARGS:-"--max_old_space_size=$((MEMORY_LIMIT_IN_BYTES/1000000-32))"}
+else
+  export NODE_ARGS=${NODE_ARGS:-"--max-old-space-size=$((MEMORY_LIMIT_IN_BYTES/1000000-32))"}
+fi
 
 # Set the debug port and development environment
 export DEBUG_PORT=${DEBUG_PORT:-"5858"}
