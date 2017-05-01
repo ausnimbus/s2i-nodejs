@@ -10,7 +10,7 @@ if [ "$DEV_MODE" == true ]; then
 	  npm install nodemon
   fi
   echo "Launching via nodemon..."
-  nodemon --debug="$DEBUG_PORT"
+  $(npm bin)/nodemon --debug="$DEBUG_PORT"
 else
   echo "Launching..."
   npm run "$NPM_RUN"
