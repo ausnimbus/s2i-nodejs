@@ -3,14 +3,8 @@ source /opt/app-root/etc/node_environment
 
 echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tDEV_MODE=${DEV_MODE}\n\tDEBUG_PORT=${DEBUG_PORT}"
 if [ "$DEV_MODE" == true ]; then
-  echo "Installing nodemon..."
-  if [ -f "yarn.lock" ]; then
-  	npm add nodemon
-  else
-	  npm install nodemon
-  fi
   echo "Launching via nodemon..."
-  $(npm bin)/nodemon --debug="$DEBUG_PORT"
+  /opt/app-root/src/.npm/bin/nodemon --debug="$DEBUG_PORT"
 else
   echo "Launching..."
   npm run "$NPM_RUN"
