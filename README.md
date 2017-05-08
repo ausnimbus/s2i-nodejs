@@ -32,15 +32,6 @@ NPM_MIRROR  | Use a custom NPM registry mirror to download packages during the b
 
 The versions currently supported are:
 
-- 4.8.2
-- 6.10.2
-- 7.9.0
-
-## Hacking
-
-`hack/run build` will build and test all images
-`hack/run update` will update all Dockerfiles
-
-`docker-squash` is used to to squash the final image:
-
-`pip install docker-squash`
+- 4.8
+- 6.10
+- 7.9
