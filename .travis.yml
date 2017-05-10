@@ -10,7 +10,8 @@ before_install:
   hack/build-go.sh
   popd
 script:
-- "DOCKER_PUSH=false . hack/run build"
+- docker login -u="$DOCKER_USER" -p="$DOCKER_PASS" quay.io
+- DOCKER_PUSH=true . hack/run build
 notifications:
   slack:
     secure: QkQ5KyInwOWmkk4SWw3vSyagJtHH2T5zV9BKZMyGctQNgdCkC7nlUKBcoimMPwlhh2kC/VTjQRXKsdfBAZfFYtQEj1HecxWkMYkO/NACi0r2BrU+7odvtPhwsey3guazpnkit8So1vsMWQFFjVNhYmrzobMUHuu+9E+yvImTNejjMMVGKdvUm+VwXRKjsG1pmWHs5q6nQFpZFZvrnlQyX0RbgtfbYW0T5XSjeBbBQC8VdHeTFq9JTHQgJNXmaisbtP9kWZyqGGcbrUNFuZwgV14OqVSitUSi9F2WwyiojU71ONyGuR3Eayj0ChVPJ97fMcYbhSLvolPrkM+CeNHva+Ieqd1MniFZHuKkHpTS62oE6L0cuDPK1DYlzAiZp+3y4VaSA7t4whwPkqIbvODpyORipSfqObG49wlNqEGRdEaqCxRgk9ap7gXpCW12egOhsK/HxkBbYbgcr+ruS1ycVqUgkFzMhNs1+WIqB8+gtEzNf6leTnDRkFuVjzEpUfh0bHeYddW6Z4a4OJdx7gm/sjKu8DGcEDvXm5xIvm8m+9GBAj8babR0Lceaa4izN14LWOkLmhgmDyNfd/+IOihfX/XKNau6rpMB5/gD9rWyhJOwb3rNHJ1+FXvTtEe6Pa19OFrOf9xkxSuwzaS4kaUr7XJBhRLfbR/cnidu2GT7AHI=
