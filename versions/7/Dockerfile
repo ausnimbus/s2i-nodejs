@@ -3,9 +3,9 @@
 #
 # DO NOT EDIT IT DIRECTLY.
 #
+FROM node:7-alpine
 # <pre>
 
-FROM node:7-alpine
 MAINTAINER AusNimbus <support@ausnimbus.com.au>
 
 LABEL summary="Platform for running Node.js 7 applications" \
@@ -15,7 +15,7 @@ LABEL summary="Platform for running Node.js 7 applications" \
 
 ENV HOME=/opt/app-root/src
 
-RUN apk --no-cache add bash rsync git && rm -rf /var/cache/apk/* && \
+RUN apk --no-cache add bash rsync && rm -rf /var/cache/apk/* && \
     mkdir -p ${HOME}/.pki/nssdb && \
     chown -R 1001:0 ${HOME}/.pki && \
     adduser -S -u 1001 -G root -h ${HOME} -s /sbin/nologin \
@@ -32,7 +32,7 @@ COPY ./contrib/ /opt/app-root
 # </pre>
 # <s2i>
 
-EXPOSE 8080
+RUN apk --no-cache add git && rm -rf /var/cache/apk/*
 
 ENV STI_SCRIPTS_PATH=/usr/libexec/s2i
 
@@ -47,6 +47,7 @@ COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 # can execute relative to this path.
 WORKDIR ${HOME}
 
+EXPOSE 8080
 CMD /usr/bin/base-usage
 
 # </s2i>
@@ -63,9 +64,9 @@ RUN npm install -g nodemon
 # </template>
 # <post>
 
-# Drop the root user and make the content of /opt/app-root owned by user 1001
-RUN chown -R 1001:0 /opt/app-root && chmod -R ug+rwx /opt/app-root
-USER 1001
+# Drop the root user and make the content of /opt/app-root owned by user default
+RUN chown -R default:0 /opt/app-root && chmod -R ug+rwx /opt/app-root
+USER default
 
 ENTRYPOINT ["container-entrypoint"]
 
