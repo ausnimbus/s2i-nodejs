@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 NAME="node"
 DISPLAY_NAME="Node.js"
