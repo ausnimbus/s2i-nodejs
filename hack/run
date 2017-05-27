@@ -1,9 +1,9 @@
-#!/bin/bash -e
+#!/bin/bash
 
 NAME="node"
 DISPLAY_NAME="Node.js"
-REPO="ausnimbus/s2i-nodejs"
-TEMPLATES="pre,s2i,template,post"
+REPO="s2i-nodejs"
+TYPE="s2i"
 VARIANT="alpine"
 VERSIONS="4,6,7"
 
