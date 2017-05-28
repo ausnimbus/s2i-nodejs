@@ -18,7 +18,7 @@ node {
                                                 "metadata" : [
                                                         "name" : "node",
                                                         "labels" : [
-                                                                "builder" : "s2i-nodejs"
+                                                                "builder" : "s2i-node"
                                                         ]
                                                 ],
                                                 "spec" : [
@@ -40,9 +40,9 @@ node {
                                                 "apiVersion" : "v1",
                                                 "kind" : "ImageStream",
                                                 "metadata" : [
-                                                        "name" : "s2i-nodejs",
+                                                        "name" : "s2i-node",
                                                         "labels" : [
-                                                                "builder" : "s2i-nodejs"
+                                                                "builder" : "s2i-node"
                                                         ]
                                                 ]
                                         ]
@@ -53,22 +53,22 @@ node {
                                 "apiVersion" : "v1",
                                 "kind" : "BuildConfig",
                                 "metadata" : [
-                                        "name" : "s2i-nodejs-${versions[i]}",
+                                        "name" : "s2i-node-${versions[i]}",
                                         "labels" : [
-                                                "builder" : "s2i-nodejs"
+                                                "builder" : "s2i-node"
                                         ]
                                 ],
                                 "spec" : [
                                         "output" : [
                                                 "to" : [
                                                         "kind" : "ImageStreamTag",
-                                                        "name" : "s2i-nodejs:${versions[i]}"
+                                                        "name" : "s2i-node:${versions[i]}"
                                                 ]
                                         ],
                                         "runPolicy" : "Serial",
                                         "source" : [
                                                 "git" : [
-                                                        "uri" : "https://github.com/ausnimbus/s2i-nodejs"
+                                                        "uri" : "https://github.com/ausnimbus/s2i-node"
                                                 ],
                                                 "type" : "Git"
                                         ],
@@ -84,7 +84,7 @@ node {
                                         ]
                                 ]
                         ])
-        echo "Created s2i-nodejs:${versions[i]} objects"
+        echo "Created s2i-node:${versions[i]} objects"
         /**
         * TODO: Replace the sleep with import-image
         * openshift.importImage("node:${versions[i]}-alpine")
@@ -92,9 +92,9 @@ node {
         sleep 60
 
         echo "==============================="
-        echo "Starting build s2i-nodejs-${versions[i]}"
+        echo "Starting build s2i-node-${versions[i]}"
         echo "==============================="
-        def builds = openshift.startBuild("s2i-nodejs-${versions[i]}");
+        def builds = openshift.startBuild("s2i-node-${versions[i]}");
 
         timeout(10) {
                 builds.untilEach(1) {
@@ -111,7 +111,7 @@ node {
         echo "Starting test application"
         echo "==============================="
 
-        def testApp = openshift.newApp("https://github.com/ausnimbus/node-ex", "--image-stream=s2i-nodejs:${versions[i]}", "-l app=node-ex");
+        def testApp = openshift.newApp("https://github.com/ausnimbus/s2i-node-ex", "--image-stream=s2i-node:${versions[i]}", "-l app=node-ex");
         echo "new-app created ${testApp.count()} objects named: ${testApp.names()}"
         testApp.describe()
 
