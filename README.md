@@ -34,4 +34,4 @@ The versions currently supported are:
 
 - 4.8
 - 6.10
-- 7.9
+- 7.10
