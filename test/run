@@ -10,7 +10,7 @@ IMAGE_NAME=${IMAGE_NAME-ausnimbus/s2i-nodejs:7}
 VERSION=${VERSION-"7"}
 S2I_ARGS=${S2I_ARGS:-""}
 
-TEST_APPS=({echo,express,chat,chat-yarn})
+TEST_APPS=({echo,express,express-yarn})
 VERSION_COMMAND="node --version"
 
 extra_tests() {
