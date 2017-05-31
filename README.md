@@ -32,6 +32,6 @@ NPM_MIRROR  | Use a custom NPM registry mirror to download packages during the b
 
 The versions currently supported are:
 
-- 4.8
-- 6.10
-- 7.10
+- 4
+- 6
+- 8

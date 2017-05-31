@@ -4,7 +4,7 @@
 * DO NOT EDIT IT DIRECTLY.
 */
 node {
-        def versions = "4,6,7".split(',');
+        def versions = "4,6,8".split(',');
         for (int i = 0; i < versions.length; i++) {
                 try {
                         stage("Build (Node.js ${versions[i]})") {

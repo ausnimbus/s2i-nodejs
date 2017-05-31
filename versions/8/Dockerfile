@@ -3,15 +3,15 @@
 #
 # DO NOT EDIT IT DIRECTLY.
 #
-FROM node:7-alpine
+FROM node:8-alpine
 # <pre>
 
 MAINTAINER AusNimbus <support@ausnimbus.com.au>
 
-LABEL summary="Platform for running Node.js 7 applications" \
+LABEL summary="Platform for running Node.js 8 applications" \
       maintainer="AusNimbus <support@ausnimbus.com.au>" \
-      io.k8s.description="Platform for running Node.js 7 applications" \
-      io.k8s.display-name="Node.js 7"
+      io.k8s.description="Platform for running Node.js 8 applications" \
+      io.k8s.display-name="Node.js 8"
 
 ENV HOME=/opt/app-root/src
 
