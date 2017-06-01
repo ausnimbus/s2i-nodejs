@@ -3,7 +3,12 @@ source cgroup-limits
 
 npm() {
   if [ -f "yarn.lock" ]; then
-    node "$NODE_ARGS" /usr/local/bin/yarn "$@"
+    # Since 0.24.6 yarn added a bash intrepeter
+    if [ -f "/opt/yarn/bin/yarn.js" ]; then
+      node "$NODE_ARGS" /opt/yarn/bin/yarn.js "$@"
+    else
+      node "$NODE_ARGS" /usr/local/bin/yarn "$@"
+    fi
   else
     node "$NODE_ARGS" /usr/local/bin/npm "$@"
   fi

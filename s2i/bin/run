@@ -4,7 +4,11 @@ source /opt/app-root/etc/node_environment
 echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tDEV_MODE=${DEV_MODE}\n\tDEBUG_PORT=${DEBUG_PORT}"
 if [ "$DEV_MODE" == true ]; then
   echo "Launching via nodemon..."
-  nodemon --debug="$DEBUG_PORT"
+  if [ ${NODE_VERSION:0:1} == "4" ]; then
+    nodemon --debug="$DEBUG_PORT"
+  else
+    nodemon --inspect="$DEBUG_PORT"
+  fi
 else
   echo "Launching..."
   npm run "$NPM_RUN"

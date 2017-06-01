@@ -1,5 +1,13 @@
+# Builddeps required by gyp
+RUN apk add --no-cache \
+        python \
+        make \
+        g++
+
 # Globally install nodemon before setting NPM_CONFIG_PREFIX
-RUN npm install -g nodemon && rm -rf $HOME/.npm/
+RUN npm install -g nodemon && \
+    rm -rf $HOME/.npm/ && \
+    fix-permissions /usr/local/lib/node_modules/
 
 # Add $HOME/node_modules/.bin to the $PATH, allowing user to make npm scripts
 # available on the CLI without using npm's --global installation mode
