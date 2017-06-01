@@ -64,6 +64,7 @@ RUN apk add --no-cache \
 # Globally install nodemon before setting NPM_CONFIG_PREFIX
 RUN npm install -g nodemon && \
     rm -rf $HOME/.npm/ && \
+    rm -rf $HOME/.config/ && \
     chown -R 1001:0 /usr/local/lib/node_modules/ && \
     chmod -R ug+rwx /usr/local/lib/node_modules/
 
