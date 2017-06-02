@@ -4,7 +4,7 @@ NAME="node"
 DISPLAY_NAME="Node.js"
 REPO="s2i-nodejs"
 TYPE="s2i"
-VARIANT="alpine"
+VARIANTS="default,alpine"
 VERSIONS="4,6,8"
 
 DOCKER_PUSH=${DOCKER_PUSH:-"false"}

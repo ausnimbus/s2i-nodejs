@@ -4,11 +4,23 @@
 * DO NOT EDIT IT DIRECTLY.
 */
 node {
-        def versions = "4,6,8".split(',');
-        for (int i = 0; i < versions.length; i++) {
-                try {
-                        stage("Build (Node.js ${versions[i]})") {
-                                openshift.withCluster() {
+        def variants = "default,alpine".split(',');
+        for (int v = 0; v < variants.length; v++) {
+
+                def versions = "4,6,8".split(',');
+                for (int i = 0; i < versions.length; i++) {
+
+                  if (variants[v] == "default") {
+                    def variant[v] = ""
+                    def tag = versions[i]
+                  } else {
+                    def tag = versions[i] + "-" + variants[v]
+                  }
+
+
+                        try {
+                                stage("Build (Node.js-${tag})") {
+                                        openshift.withCluster() {
         openshift.apply([
                                 "apiVersion" : "v1",
                                 "items" : [
@@ -24,10 +36,10 @@ node {
                                                 "spec" : [
                                                         "tags" : [
                                                                 [
-                                                                        "name" : "${versions[i]}-alpine",
+                                                                        "name" : "${tag}",
                                                                         "from" : [
                                                                                 "kind" : "DockerImage",
-                                                                                "name" : "node:${versions[i]}--alpine",
+                                                                                "name" : "node:${tag}",
                                                                         ],
                                                                         "referencePolicy" : [
                                                                                 "type" : "Source"
@@ -53,7 +65,7 @@ node {
                                 "apiVersion" : "v1",
                                 "kind" : "BuildConfig",
                                 "metadata" : [
-                                        "name" : "s2i-nodejs-${versions[i]}",
+                                        "name" : "s2i-nodejs-${tag}",
                                         "labels" : [
                                                 "builder" : "s2i-nodejs"
                                         ]
@@ -62,7 +74,7 @@ node {
                                         "output" : [
                                                 "to" : [
                                                         "kind" : "ImageStreamTag",
-                                                        "name" : "s2i-nodejs:${versions[i]}-alpine"
+                                                        "name" : "s2i-nodejs:${tag}"
                                                 ]
                                         ],
                                         "runPolicy" : "Serial",
@@ -79,27 +91,27 @@ node {
                                         ],
                                         "strategy" : [
                                                 "dockerStrategy" : [
-                                                        "dockerfilePath" : "versions/${versions[i]}/Dockerfile",
+                                                        "dockerfilePath" : "versions/${versions[i]}/${variant[v]}/Dockerfile",
                                                         "from" : [
                                                                 "kind" : "ImageStreamTag",
-                                                                "name" : "node:${versions[i]}-alpine"
+                                                                "name" : "node:${tag}"
                                                         ]
                                                 ],
                                                 "type" : "Docker"
                                         ]
                                 ]
                         ])
-        echo "Created s2i-nodejs:${versions[i]} objects"
+        echo "Created s2i-nodejs:${tag} objects"
         /**
         * TODO: Replace the sleep with import-image
-        * openshift.importImage("node:${versions[i]}-alpine")
+        * openshift.importImage("node:${tag}")
         */
         sleep 60
 
         echo "==============================="
-        echo "Starting build s2i-nodejs-${versions[i]}"
+        echo "Starting build s2i-nodejs-${tag}"
         echo "==============================="
-        def builds = openshift.startBuild("s2i-nodejs-${versions[i]}");
+        def builds = openshift.startBuild("s2i-nodejs-${tag}");
 
         timeout(10) {
                 builds.untilEach(1) {
@@ -109,14 +121,14 @@ node {
         echo "Finished build ${builds.names()}"
 }
 
-                        }
-                        stage("Test (Node.js ${versions[i]})") {
-                                openshift.withCluster() {
+                                }
+                                stage("Test (Node.js-${tag})") {
+                                        openshift.withCluster() {
         echo "==============================="
         echo "Starting test application"
         echo "==============================="
 
-        def testApp = openshift.newApp("https://github.com/ausnimbus/node-ex", "--image-stream=s2i-nodejs:${versions[i]}", "-l app=node-ex");
+        def testApp = openshift.newApp("https://github.com/ausnimbus/node-ex", "--image-stream=s2i-nodejs:${tag}", "-l app=node-ex");
         echo "new-app created ${testApp.count()} objects named: ${testApp.names()}"
         testApp.describe()
 
@@ -148,28 +160,29 @@ node {
         sh "curl -o /dev/null $testAppHost:$testAppPort"
 }
 
-                        }
-                        stage("Stage (Node.js ${versions[i]})") {
-                                openshift.withCluster() {
+                                }
+                                stage("Stage (Node.js-${tag})") {
+                                        openshift.withCluster() {
         echo "==============================="
         echo "Tag new image into staging"
         echo "==============================="
 
-        openshift.tag("ausnimbus-ci/s2i-nodejs:${versions[i]}-alpine", "ausnimbus/s2i-nodejs:${versions[i]}-alpine")
+        openshift.tag("ausnimbus-ci/s2i-nodejs:${tag}", "ausnimbus/s2i-nodejs:${tag}")
 }
 
+                                }
+                        } finally {
+                                openshift.withCluster() {
+                                        echo "Deleting test resources node-ex"
+                                        openshift.selector("dc", [app: "node-ex"]).delete()
+                                        openshift.selector("bc", [app: "node-ex"]).delete()
+                                        openshift.selector("svc", [app: "node-ex"]).delete()
+                                        openshift.selector("is", [app: "node-ex"]).delete()
+                                        openshift.selector("pods", [app: "node-ex"]).delete()
+                                        openshift.selector("routes", [app: "node-ex"]).delete()
+                                }
                         }
-                } finally {
-                        openshift.withCluster() {
-                                echo "Deleting test resources node-ex"
-                                openshift.selector("dc", [app: "node-ex"]).delete()
-                                openshift.selector("bc", [app: "node-ex"]).delete()
-                                openshift.selector("svc", [app: "node-ex"]).delete()
-                                openshift.selector("is", [app: "node-ex"]).delete()
-                                openshift.selector("pods", [app: "node-ex"]).delete()
-                                openshift.selector("routes", [app: "node-ex"]).delete()
-                        }
-                }
 
+                }
         }
 }

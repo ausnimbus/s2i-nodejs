@@ -35,3 +35,10 @@ The versions currently supported are:
 - 4
 - 6
 - 8
+
+## Variants
+
+Two different variants are made available:
+
+- Default
+- Alpine
