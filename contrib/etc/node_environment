@@ -1,6 +1,15 @@
 #!/bin/bash
 source cgroup-limits
 
+set -o pipefail
+set -eu
+# Include hidden files
+shopt -s dotglob
+
+# Set the umask to be '002' so that any files/directories created from
+# this point are group writable.
+umask 002
+
 npm() {
   if [ -f "yarn.lock" ]; then
     # Since 0.24.6 yarn added a bash intrepeter

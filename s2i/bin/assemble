@@ -1,8 +1,6 @@
 #!/bin/bash -e
 source /opt/app-root/etc/node_environment
 
-shopt -s dotglob
-
 if [ -d /tmp/artifacts/ ]; then
     echo "---> Restoring build artifacts..."
     mv -v /tmp/artifacts/* ./
