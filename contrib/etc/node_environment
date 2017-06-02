@@ -32,8 +32,11 @@ else
 fi
 
 # Set the debug port and development environment
-export DEBUG_PORT=${DEBUG_PORT:-"5858"}
+export NODE_ENV=${NODE_ENV:-"production"}
+export NPM_RUN=${NPM_RUN:-"start"}
 export DEBUG=${DEBUG:-"FALSE"}
+export DEBUG_PORT=${DEBUG_PORT:-"5858"}
+
 
 # If NODE_ENV is not set by the user, then NODE_ENV is determined by whether
 # the container is run in development mode.
@@ -44,7 +47,3 @@ if [ -z ${NODE_ENV+x} ]; then
     export NODE_ENV=production
   fi
 fi
-
-# Initialized with "npm run $NPM_RUN"
-# See https://docs.npmjs.com/misc/scripts, and your repo's package.json
-export NPM_RUN=${NPM_RUN:-"start"}
