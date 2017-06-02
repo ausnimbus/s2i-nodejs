@@ -10,18 +10,18 @@ echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}"
 echo "---> Installing application source ..."
 mv /tmp/src/* ./
 
-if [ ! -z $HTTP_PROXY ]; then
+if [ ! -z ${HTTP_PROXY+x} ]; then
 	echo "---> Setting npm http proxy to $HTTP_PROXY"
 	npm config set proxy $HTTP_PROXY
 fi
 
-if [ ! -z $HTTPS_PROXY ]; then
+if [ ! -z ${HTTPS_PROXY+x} ]; then
 	echo "---> Setting npm https proxy to $HTTPS_PROXY"
 	npm config set https-proxy $HTTPS_PROXY
 fi
 
 # Change the npm registry mirror if provided
-if [ -n "$NPM_MIRROR" ]; then
+if [ -n $NPM_MIRROR ]; then
 	npm config set registry $NPM_MIRROR
 fi
 
