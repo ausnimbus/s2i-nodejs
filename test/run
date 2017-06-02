@@ -14,9 +14,7 @@ TEST_APPS=({echo,express,express-yarn})
 VERSION_COMMAND="node --version"
 
 extra_tests() {
-  info 'Testing DEBUG=true'
-  S2I_ARGS="-e DEBUG=true" run_s2i_build ${app}
-  CONTAINER_ARGS='-e DEBUG=true' test_application
+  echo ""
 }
 
 test_dir="$(readlink -zf $(dirname "${BASH_SOURCE[0]}"))"
