@@ -1,8 +1,8 @@
 #!/bin/bash -e
 source /opt/app-root/etc/node_environment
 
-echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tDEV_MODE=${DEV_MODE}\n\tDEBUG_PORT=${DEBUG_PORT}"
-if [ "$DEV_MODE" == true ]; then
+echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tDEBUG=${DEBUG}\n\tDEBUG_PORT=${DEBUG_PORT}"
+if [ "$DEBUG" == true ]; then
   echo "Launching via nodemon..."
   if [ ${NODE_VERSION:0:1} == "4" ]; then
     nodemon --debug="$DEBUG_PORT"
