@@ -37,7 +37,7 @@ export DEBUG=${DEBUG:-"FALSE"}
 
 # If NODE_ENV is not set by the user, then NODE_ENV is determined by whether
 # the container is run in development mode.
-if [ -z "$NODE_ENV" ]; then
+if [ -z ${NODE_ENV+x} ]; then
   if [ "$DEBUG" == "TRUE" ]; then
     export NODE_ENV=development
   else
