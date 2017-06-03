@@ -1,8 +1,6 @@
 #!/bin/bash -e
 source /opt/app-root/etc/node_environment
 
-shopt -s dotglob
-
 if [ -d /tmp/artifacts/ ]; then
     echo "---> Restoring build artifacts..."
     mv -v /tmp/artifacts/* ./
@@ -12,18 +10,8 @@ echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}"
 echo "---> Installing application source ..."
 mv /tmp/src/* ./
 
-if [ ! -z $HTTP_PROXY ]; then
-	echo "---> Setting npm http proxy to $HTTP_PROXY"
-	npm config set proxy $HTTP_PROXY
-fi
-
-if [ ! -z $HTTPS_PROXY ]; then
-	echo "---> Setting npm https proxy to $HTTPS_PROXY"
-	npm config set https-proxy $HTTPS_PROXY
-fi
-
 # Change the npm registry mirror if provided
-if [ -n "$NPM_MIRROR" ]; then
+if [[ ${NPM_MIRROR:+1} ]]; then
 	npm config set registry $NPM_MIRROR
 fi
 

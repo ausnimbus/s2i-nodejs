@@ -3,7 +3,7 @@
 #
 # DO NOT EDIT IT DIRECTLY.
 #
-FROM node:4-alpine
+FROM node:4
 # <pre>
 
 MAINTAINER AusNimbus <support@ausnimbus.com.au>
@@ -13,15 +13,16 @@ LABEL summary="Platform for running Node.js 4 applications" \
       io.k8s.description="Platform for running Node.js 4 applications" \
       io.k8s.display-name="Node.js 4"
 
-ENV HOME=/opt/app-root/src
+ENV USER=999 \
+    HOME=/opt/app-root/src
 
 USER 0
 
-RUN apk --no-cache add bash rsync && \
-    mkdir -p ${HOME}/.pki/nssdb && \
-    chown -R 1001:0 ${HOME}/.pki && \
-    adduser -S -u 1001 -G root -h ${HOME} -s /sbin/nologin \
-      -g "Default Application User" default && \
+RUN apt-get update && apt-get install -y \
+      rsync nano vim && \
+    mkdir -p $HOME && \
+    useradd -u 1001 -g 0 -d ${HOME} -s /sbin/nologin \
+      -c "Default Application User" default && \
     chown -R 1001:0 /opt/app-root
 
 # Copy common executable utilities.
@@ -34,7 +35,7 @@ COPY ./contrib/ /opt/app-root
 # </pre>
 # <s2i>
 
-RUN apk --no-cache add git && rm -rf /var/cache/apk/*
+RUN apt-get install -y git
 
 ENV STI_SCRIPTS_PATH=/usr/libexec/s2i
 
@@ -56,7 +57,7 @@ CMD /usr/bin/base-usage
 # <template>
 
 # Builddeps required by gyp
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         python \
         make \
         g++
@@ -65,7 +66,7 @@ RUN apk add --no-cache \
 RUN npm install -g nodemon && \
     rm -rf $HOME/.npm/ && \
     rm -rf $HOME/.config/ && \
-    chown -R 1001:0 /usr/local/lib/node_modules/ && \
+    chown -R $USER:0 /usr/local/lib/node_modules/ && \
     chmod -R ug+rwx /usr/local/lib/node_modules/
 
 # Add $HOME/node_modules/.bin to the $PATH, allowing user to make npm scripts
@@ -76,14 +77,12 @@ ENV NPM_CONFIG_PREFIX=$HOME/.npm \
 # </template>
 # <post>
 
-# Standardize on UID 100 (alpine:3.4 does not have the shadow package)
-RUN apk add shadow --no-cache --repository http://rsync.alpinelinux.org/alpine/latest-stable/community/ && \
-    usermod -o -u 100 default && \
-    apk del shadow
+# Standardize on UID $USER
+RUN usermod -o -u $USER default
 
 # Drop the root user and make the content of /opt/app-root owned by user default
-RUN chown -R 100:0 /opt/app-root && chmod -R ug+rwx /opt/app-root
-USER 100
+RUN chown -R $USER:0 /opt/app-root && chmod -R ug+rwx /opt/app-root
+USER $USER
 
 ENTRYPOINT ["container-entrypoint"]
 
