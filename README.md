@@ -1,11 +1,9 @@
-# NodeJS S2I Docker images
+# AusNimbus Builder for Node.js
 
 [![Build Status](https://travis-ci.org/ausnimbus/s2i-nodejs.svg?branch=master)](https://travis-ci.org/ausnimbus/s2i-nodejs)
 [![Docker Repository on Quay](https://quay.io/repository/ausnimbus/s2i-nodejs/status "Docker Repository on Quay")](https://quay.io/repository/ausnimbus/s2i-nodejs)
 
-This repository contains the source for the [source-to-image](https://github.com/openshift/source-to-image)
-builders used to deploy [NodeJS applications](https://www.ausnimbus.com.au/languages/nodejs/)
-on [AusNimbus](https://www.ausnimbus.com.au/).
+[AusNimbus](https://www.ausnimbus.com.au/) builder for Node.js provides a fast, secure and reliable [Node.js hosting](https://www.ausnimbus.com.au/languages/nodejs-hosting/) environment.
 
 The Yarn package manager is included and will be used over NPM if a `yarn.lock` file exists.
 
