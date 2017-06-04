@@ -16,7 +16,7 @@ before_install:
   hack/build-go.sh
   popd
 script:
-- if [ "$TRAVIS_BRANCH" = "master" ]; then DOCKER_PUSH=true && docker login -u="$DOCKER_USER" -p="$DOCKER_PASS" quay.io; fi
+- if [ "$TRAVIS_BRANCH" = "master" ]; then export DOCKER_PUSH=true && docker login -u="$DOCKER_USER" -p="$DOCKER_PASS" quay.io; fi
 - ./hack/run build
 notifications:
   slack:
