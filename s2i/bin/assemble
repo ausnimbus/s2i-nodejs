@@ -16,11 +16,10 @@ if [[ ${NPM_MIRROR:+1} ]]; then
 fi
 
 if [ -f "yarn.lock" ]; then
-	# npm is an alias
-	echo "---> Building your Node application from source (yarn)"
-	npm install --pure-lockfile --ignore-engines
+	echo "---> Installing node modules (yarn.lock)"
+	yarn install --pure-lockfile --ignore-engines
 else
-	echo "---> Building your Node application from source (npm)"
+	echo "---> Installing node modules (npm)"
 	npm install
 fi
 

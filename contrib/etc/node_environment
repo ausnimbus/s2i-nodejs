@@ -10,17 +10,17 @@ shopt -s dotglob
 # this point are group writable.
 umask 002
 
-npm() {
-  if [ -f "yarn.lock" ]; then
-    # Since 0.24.6 yarn added a bash intrepeter
-    if [ -f "/opt/yarn/bin/yarn.js" ]; then
-      node "$NODE_ARGS" /opt/yarn/bin/yarn.js "$@"
-    else
-      node "$NODE_ARGS" /usr/local/bin/yarn "$@"
-    fi
+yarn() {
+  # Since 0.24.6 yarn added a bash intrepeter
+  if [ -f "/opt/yarn/bin/yarn.js" ]; then
+    node "$NODE_ARGS" /opt/yarn/bin/yarn.js "$@"
   else
-    node "$NODE_ARGS" /usr/local/bin/npm "$@"
+    node "$NODE_ARGS" /usr/local/bin/yarn "$@"
   fi
+}
+
+npm() {
+  node "$NODE_ARGS" /usr/local/bin/npm "$@"
 }
 
 # Define the maximum memory limit (total_limit - 32MB)
@@ -37,13 +37,7 @@ export NPM_RUN=${NPM_RUN:-"start"}
 export DEBUG=${DEBUG:-"FALSE"}
 export DEBUG_PORT=${DEBUG_PORT:-"5858"}
 
-
-# If NODE_ENV is not set by the user, then NODE_ENV is determined by whether
-# the container is run in development mode.
-if [ -z ${NODE_ENV+x} ]; then
-  if [ "$DEBUG" == "TRUE" ]; then
-    export NODE_ENV=development
-  else
-    export NODE_ENV=production
-  fi
+# Overwrite NODE_ENV when DEBUG==TRUE
+if [ "$DEBUG" == "TRUE" ]; then
+  export NODE_ENV=development
 fi
