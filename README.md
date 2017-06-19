@@ -1,9 +1,10 @@
-# AusNimbus Builder for Node.js
+# AusNimbus Builder for Node.js [![Build Status](https://travis-ci.org/ausnimbus/s2i-nodejs.svg?branch=master)](https://travis-ci.org/ausnimbus/s2i-nodejs) [![Docker Repository on Quay](https://quay.io/repository/ausnimbus/s2i-nodejs/status "Docker Repository on Quay")](https://quay.io/repository/ausnimbus/s2i-nodejs)
 
-[![Build Status](https://travis-ci.org/ausnimbus/s2i-nodejs.svg?branch=master)](https://travis-ci.org/ausnimbus/s2i-nodejs)
-[![Docker Repository on Quay](https://quay.io/repository/ausnimbus/s2i-nodejs/status "Docker Repository on Quay")](https://quay.io/repository/ausnimbus/s2i-nodejs)
+[![Node.js](https://user-images.githubusercontent.com/2239920/27286574-0a022ccc-5544-11e7-83bd-9f72e132fdfb.jpg)](https://www.ausnimbus.com.au/)
 
 [AusNimbus](https://www.ausnimbus.com.au/) builder for Node.js provides a fast, secure and reliable [Node.js hosting](https://www.ausnimbus.com.au/languages/nodejs-hosting/) environment.
+
+It uses NPM for dependency management. Web processes must bind to port `8080`, and only the HTTP protocol is permitted for incoming connections.
 
 The Yarn package manager is included and will be used over NPM if a `yarn.lock` file exists.
 
@@ -26,10 +27,3 @@ The versions currently supported are:
 - 4
 - 6
 - 8
-
-## Variants
-
-Two different variants are made available:
-
-- Default
-- Alpine
