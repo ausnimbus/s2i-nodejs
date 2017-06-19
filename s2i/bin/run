@@ -1,15 +1,20 @@
 #!/bin/bash -e
 source /opt/app-root/etc/node_environment
 
-echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tDEBUG=${DEBUG}\n\tDEBUG_PORT=${DEBUG_PORT}"
+echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tDEBUG=${DEBUG}"
+
 if [ "$DEBUG" == true ]; then
-  echo "Launching via nodemon..."
+  echo "Starting application via nodemon..."
   if [ ${NODE_VERSION:0:1} == "4" ]; then
     nodemon --debug="$DEBUG_PORT"
   else
     nodemon --inspect="$DEBUG_PORT"
   fi
 else
-  echo "Launching..."
-  npm run "$NPM_RUN"
+  echo "---> Starting application ($NPM_RUN)..."
+  if [ -f "yarn.lock" ]; then
+  	yarn run "$NPM_RUN"
+  else
+  	npm run "$NPM_RUN"
+  fi
 fi
