@@ -130,7 +130,7 @@ node {
         echo "Starting test application"
         echo "==============================="
 
-        def testApp = openshift.newApp("https://github.com/ausnimbus/node-ex", "--image-stream=s2i-nodejs:${tag}", "-l app=node-ex");
+        def testApp = openshift.newApp("s2i-nodejs:${tag}~https://github.com/ausnimbus/node-ex", "-l app=node-ex");
         echo "new-app created ${testApp.count()} objects named: ${testApp.names()}"
         testApp.describe()
 
@@ -157,9 +157,11 @@ node {
         def testAppHost = testAppService.object().spec.clusterIP;
         def testAppPort = testAppService.object().spec.ports[0].port;
 
-        sleep 60
-        echo "Testing endpoint ${testAppHost}:${testAppPort}"
-        sh "curl -o /dev/null $testAppHost:$testAppPort"
+        retry(2) {
+          sleep 60
+          echo "Testing endpoint ${testAppHost}:${testAppPort}"
+          sh "curl -o /dev/null $testAppHost:$testAppPort"  
+        }
 }
 
                                 }
