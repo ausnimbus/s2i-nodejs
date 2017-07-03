@@ -4,6 +4,7 @@
   "description": "node-echo",
   "main": "server.js",
   "dependencies": {
+    "v8-heap-space-statistics": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "*"

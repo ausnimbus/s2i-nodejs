@@ -3,9 +3,11 @@ var http = require('http');
 var url = require('url');
 var qs = require('querystring');
 var os = require('os')
-var port = process.env.PORT || process.env.port || process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var ip = process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+var port = process.env.PORT || process.env.port || 8080;
+var ip = '0.0.0.0';
 var nodeEnv = process.env.NODE_ENV || 'unknown';
+var getHeapSpaceStatistics = require('v8-heap-space-statistics');
+
 var server = http.createServer(function (req, res) {
 	var url_parts = url.parse(req.url, true);
 
@@ -42,6 +44,7 @@ var server = http.createServer(function (req, res) {
 		res.write('OS CPU count: ' + os.cpus().length + '\n');
 		res.write('OS CPU model: ' + os.cpus()[0].model + '\n');
 		res.write('OS CPU speed: ' + os.cpus()[0].speed + 'mhz\n');
+		res.write(JSON.stringify(getHeapSpaceStatistics()));
 		res.end('\n');
 
 	});
