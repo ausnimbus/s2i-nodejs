@@ -11,25 +11,39 @@ shopt -s dotglob
 # this point are group writable.
 umask 002
 
-yarn() {
-  # Since 0.24.6 yarn added a bash intrepeter
-  if [ -f "/opt/yarn/bin/yarn.js" ]; then
-    node "$NODE_ARGS" /opt/yarn/bin/yarn.js "$@"
-  else
-    node "$NODE_ARGS" /usr/local/bin/yarn "$@"
-  fi
+node() {
+  /usr/local/bin/node "$NODE_ARGS" "$@"
 }
 
-npm() {
-  node "$NODE_ARGS" /usr/local/bin/npm "$@"
-}
+# Define some recommended flags
+export NODE_RECOMMENDED_FLAGS=${NODE_RECOMMENDED_FLAGS-"--optimize_for_size --always_compact --gc_interval=100"}
 
-# Define the maximum memory limit (total_limit - 32MB)
+# WEB_MEMORY defines the cluster memory limits
+if [[ -n $WEB_MEMORY ]]; then
+  # Check a valid number is provided (without MB)
+  check-number $WEB_MEMORY
+
+  node_memory=$WEB_MEMORY
+  web_concurrency=$((MEMORY_LIMIT / WEB_MEMORY))
+else
+  node_memory=${MEMORY_LIMIT}
+  web_concurrency=1
+fi
+
+# This is provided for convenience only
+export WEB_CONCURRENCY=${WEB_CONCURRENCY:-$web_concurrency}
+
+# Try to avoid spikes leading to crashes
+max_semi_space_size=$((node_memory / 192))
+[[ $max_semi_space_size -le 1 ]] && max_semi_space_size=2
+
+# Define the maximum memory limit (total_limit = 90%)
 if [ ${NODE_VERSION:0:1} == "4" ]; then
   # The v8 engine packaged with node4 uses max_old_space_size
-  export NODE_ARGS=${NODE_ARGS:-"--max_old_space_size=$((MEMORY_LIMIT-32))"}
+  export NODE_ARGS=${NODE_ARGS:-"$NODE_RECOMMENDED_FLAGS --max_semi_space_size=$max_semi_space_size --max_old_space_size=$((node_memory * 80 / 100))"}
 else
-  export NODE_ARGS=${NODE_ARGS:-"--max-old-space-size=$((MEMORY_LIMIT-32))"}
+  # TODO use ENV variables instead (https://github.com/nodejs/node/pull/12028)
+  export NODE_ARGS=${NODE_ARGS:-"$NODE_RECOMMENDED_FLAGS --max_semi_space_size=$max_semi_space_size --max-old-space-size=$((node_memory * 80 / 100))"}
 fi
 
 # Set the debug port and development environment

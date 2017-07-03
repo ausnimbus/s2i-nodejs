@@ -6,11 +6,11 @@
 # The image has to be available before this script is executed.
 #
 
-IMAGE_NAME=${IMAGE_NAME-ausnimbus/s2i-nodejs:7}
-VERSION=${VERSION-"7"}
+IMAGE_NAME=${IMAGE_NAME-ausnimbus/s2i-nodejs:8}
+VERSION=${VERSION-"8"}
 S2I_ARGS=${S2I_ARGS:-""}
 
-TEST_APPS=({echo,express,express-yarn})
+TEST_APPS=({echo,express,express-yarn,express-cluster})
 VERSION_COMMAND="node --version"
 
 extra_tests() {
