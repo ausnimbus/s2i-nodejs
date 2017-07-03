@@ -1,7 +1,7 @@
-#!/bin/bash -e
+#!/bin/bash
 source /opt/app-root/etc/node_environment
 
-echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tDEBUG=${DEBUG}"
+echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tWEB_MEMORY=${WEB_MEMORY:-"null"}\n\tWEB_COCURRENCY=${WEB_CONCURRENCY}"
 
 if [ "$DEBUG" == true ]; then
   echo "Starting application via nodemon..."

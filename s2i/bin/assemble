@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 source /opt/app-root/etc/node_environment
 
 if ls -U /tmp/artifacts/* 1> /dev/null 2>&1; then
