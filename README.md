@@ -22,9 +22,28 @@ NPM_MIRROR  | Use a custom NPM registry mirror to download packages during the b
 
 Due to the single-threaded design of Node.js, it doesn't fully take advantage of multiple CPU cores and additional memory. Instead it is recommended to fork multiple process using Node.js [clustering](http://nodejs.org/api/cluster.html). This will allow you to fully utilize the available resources.
 
-A simple example:
+A simple example with `cluster`:
 
 ```javascript
+var cluster = require('cluster');
+var WORKERS = process.env.WEB_CONCURRENCY || 1;
+
+// Code to run if we're in the master process
+if (cluster.isMaster) {
+  // Create a worker for each WORKERS
+  for (var i = 0; i < WORKERS; i += 1) {
+      cluster.fork();
+  }
+// Code to run if we're in a worker process
+} else {
+  // ...
+}
+```
+
+Another example with [throng](https://github.com/hunterloftis/throng):
+
+```javascript
+var throng  = require('throng');
 var WORKERS = process.env.WEB_CONCURRENCY || 1;
 
 // Entrypoint for our new clustered process
@@ -39,14 +58,15 @@ throng({
 });
 ```
 
-The AusNimbus builder provides you with a convenient `WEB_MEMORY` environment variable. The value should be set in MB to the expected memory requirements of your application. When set, the AusNimbus builder will automatically tune the `WEB_CONCURRENCY` and `NODE_ARGS` based on your `WEB_MEMORY` value.
+The AusNimbus builder provides you with a convenient `WEB_MEMORY` environment variable. The value should be set in MB to the expected memory requirements of your application.
+
+`WEB_CONCURRENCY` and `NODE_ARGS` will be automatically tuned based on your `WEB_MEMORY` value.
 
 NAME             | Description
 -----------------|-------------
 WEB_MEMORY       | Specify expected memory requirements of your application in MB (ie. 512)
-WEB_CONCURRENCY  | Convenient automatically calculated variable based on `MEMORY_AVAILABLE / WEB_MEMORY`
+WEB_CONCURRENCY  | Automatically calculated variable based on `MEMORY_AVAILABLE / WEB_MEMORY`
 NODE_ARGS        | Arguments passed to `node`. By default it will automatically tune the environment based on your memory limit.
-
 
 ## Versions
 
