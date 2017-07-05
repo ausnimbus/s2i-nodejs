@@ -60,7 +60,8 @@ CMD /usr/bin/base-usage
 RUN apk add --no-cache \
         python \
         make \
-        g++
+        g++ \
+        jq
 
 # Globally install nodemon before setting NPM_CONFIG_PREFIX
 RUN npm install -g nodemon && \

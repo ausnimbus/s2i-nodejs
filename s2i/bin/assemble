@@ -2,8 +2,8 @@
 source /opt/app-root/etc/node_environment
 
 if ls -U /tmp/artifacts/* 1> /dev/null 2>&1; then
-    echo "---> Restoring build artifacts..."
-    mv -v /tmp/artifacts/* ./
+  echo "---> Restoring build artifacts..."
+  mv -v /tmp/artifacts/* ./
 fi
 
 echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}"
@@ -12,15 +12,39 @@ mv /tmp/src/* ./
 
 # Change the npm registry mirror if provided
 if [[ ${NPM_MIRROR:+1} ]]; then
-	npm config set registry $NPM_MIRROR
+  npm config set registry $NPM_MIRROR
 fi
 
+# AusNimbus specific pre build steps
+ausnimbus_prebuild=$(<./package.json jq -r .scripts[\"ausnimbus-prebuild\"])
+ausnimbus_postbuild=$(<./package.json jq -r .scripts[\"ausnimbus-postbuild\"])
+
 if [ -f "yarn.lock" ]; then
-	echo "---> Installing node modules (yarn.lock)"
-	yarn install --pure-lockfile --ignore-engines
+  if -n [ "$ausnimbus_prebuild" ]; then
+    echo "----> Running prebuild $ausnimbus_prebuild (yarn)"
+    yarn run "$ausnimbus_prebuild"
+  fi
+
+  echo "---> Installing node modules (yarn)"
+  yarn install --pure-lockfile --ignore-engines
+
+  if -n [ "$ausnimbus_postbuild" ]; then
+    echo "----> Running prebuild $ausnimbus_postbuild (yarn)"
+    yarn run "$ausnimbus_postbuild"
+  fi
 else
-	echo "---> Installing node modules (npm)"
-	npm install
+  if -n [ "$ausnimbus_prebuild" ]; then
+    echo "----> Running prebuild $ausnimbus_prebuild (npm)"
+    npm run "$ausnimbus_prebuild" --if-present
+  fi
+
+  echo "---> Installing node modules (npm)"
+  npm install
+
+  if -n [ "$ausnimbus_postbuild" ]; then
+    echo "----> Running prebuild $ausnimbus_postbuild (npm)"
+    npm run "$ausnimbus_postbuild" --if-present
+  fi
 fi
 
 # Fix source directory permissions
