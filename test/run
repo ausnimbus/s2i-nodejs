@@ -10,7 +10,7 @@ IMAGE_NAME=${IMAGE_NAME-ausnimbus/s2i-nodejs:8}
 VERSION=${VERSION-"8"}
 S2I_ARGS=${S2I_ARGS:-""}
 
-TEST_APPS=({echo,express,express-yarn,express-cluster})
+TEST_APPS=({echo,express,express-yarn,express-cluster,express-prepostbuild})
 VERSION_COMMAND="node --version"
 
 extra_tests() {

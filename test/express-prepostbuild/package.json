@@ -1,0 +1,12 @@
+{
+  "name": "express",
+  "main": "index.js",
+  "scripts": {
+    "ausnimbus-prebuild": "echo prebuild",
+    "ausnimbus-postbuild": "echo postbuild",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
