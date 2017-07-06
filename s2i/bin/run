@@ -3,6 +3,12 @@ source /opt/app-root/etc/node_environment
 
 echo -e "Environment: \n\tNODE_ENV=${NODE_ENV}\n\tNODE_ARGS=${NODE_ARGS}\n\tWEB_MEMORY=${WEB_MEMORY:-"null"}\n\tWEB_COCURRENCY=${WEB_CONCURRENCY}"
 
+# APP_RUN defined (eg. node server.js)
+if [[ -n "$APP_RUN" ]]; then
+  echo "---> Running application from ($APP_RUN) ..."
+  eval bash -c "$APP_RUN"
+fi
+
 if [ "$DEBUG" == true ]; then
   echo "Starting application via nodemon..."
   if [ ${NODE_VERSION:0:1} == "4" ]; then

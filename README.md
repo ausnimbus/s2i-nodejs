@@ -4,23 +4,113 @@
 
 The [AusNimbus](https://www.ausnimbus.com.au/) builder for Node.js provides a fast, secure and reliable [Node.js hosting](https://www.ausnimbus.com.au/languages/nodejs-hosting/) environment.
 
-It uses NPM for dependency management. Web processes must bind to port `8080`, and only the HTTP protocol is permitted for incoming connections.
+This document describes the behaviour and environment configuration when running your Node.js apps on AusNimbus.
 
-The Yarn package manager is included and will be used over NPM if a `yarn.lock` file exists.
+## Runtime Environments
 
-## Environment Variables
+AusNimbus supports the latest stable release and each of the LTS releases.
+
+Node.js uses the semantic versioning convention in the form of `$MAJOR.$MINOR.$PATCH`
+
+The currently supported versions are `4.x`, `6.x`, `8.x`
+
+## Web Process
+
+Your application's web processes must bind to port `8080`.
+
+AusNimbus handles SSL termination at the load balancer.
+
+The builder will start your web process by executing `npm run start` or `yarn run start` (see [Dependency Management](#Dependency Management) below). Your start [`script`](https://docs.npmjs.com/misc/scripts) can be specified in your `package.json`.
+
+For example:
+
+```json
+"scripts": {
+  "start": "node express.js"
+}
+```
+
+If you would like to customize the execution process further you may configure the following environment variable:
 
 NAME        | Description
 ------------|-------------
-NODE_ENV    | NodeJS runtime mode (default: "production")
-NPM_RUN     | Select an alternate / custom runtime mode, defined in your `package.json` file's [`scripts`](https://docs.npmjs.com/misc/scripts) section (default: npm run "start"). These user-defined run-scripts are unavailable while `DEBUG` is in use.
-DEBUG       | When set to "TRUE", `nodemon` will be used to automatically reload the server while you work (default: "false"). Setting `DEBUG` to "TRUE" will also change the `NODE_ENV` default to "development" (if not explicitly set).
-NODE_ARGS   | Arguments passed to `node`. By default it will automatically tune the environment based on your memory limit.
-NPM_MIRROR  | Use a custom NPM registry mirror to download packages during the build process
+NPM_RUN     | Define a custom start script to run from your `package.json`. Default: `start`
 
-### Application Concurrency (Clustering)
+## Dependency Management
+
+The builder uses
+the [Npm package manager](https://www.npmjs.com/) for installing dependencies and running scripts from your `package.json`.
+
+If a `yarn.lock` file is found, the [Yarn package manager](https://yarnpkg.com/) will be used instead of `npm`.
+
+### devDependencies
+
+By default your application will be built and deployed in `production`. If you would like to install `devDependencies` you will need to set your `NODE_ENV` to `development`.
+
+Remember that including `devDependencies` will slow your entire deployment time, it is recommended you only include the dependencies you need for production builds.
+
+## Environment Configuration
+
+The following environment variables are available for you to configure your Node.js environment:
+
+NAME        | Description
+------------|-------------
+NODE_ENV    | Node.js environment (Default: "production")
+NODE_ARGS   | Arguments passed to the `node` command. By default this value will be automatically tune the environment based on the app instance size.
+
+## Advanced
+
+### Build Customization
+
+If your application has custom build steps you would like to run you can use the [preinstall](https://docs.npmjs.com/misc/scripts) or [postinstall scripts](https://docs.npmjs.com/misc/scripts) in your `package.json`. eg
+
+```json
+"scripts": {
+  "start": "node server.js",
+  "test": "mocha",
+  "postinstall": "grunt build"
+}
+```
+
+If you would like to run specific scripts when deployed only on AusNimbus.
+
+You may specify the `ausnimbus-prebuild` and/or `ausnimbus-postbuild` scripts.
+
+For example, if you only want to build production assets when deploying to AusNimbus:
+
+
+```json
+"scripts": {
+  "ausnimbus-prebuild": "echo we are about to deploy to AusNimbus",
+  "ausnimbus-postbuild": "grunt build"
+}
+```
+
+#### Configuring npm
+
+If you would like to use a custom npm mirror you may use the following environment variable:
+
+NAME        | Description
+------------|-------------
+NPM_MIRROR  | Define a custom npm registry mirror for downloading dependencies
+
+You can also customize npm further by including a [.npmrc](https://docs.npmjs.com/files/npmrc) file in your project’s root.
+
+### Application Concurrency
 
 Due to the single-threaded design of Node.js, it doesn't fully take advantage of multiple CPU cores and additional memory. Instead it is recommended to fork multiple process using Node.js [clustering](http://nodejs.org/api/cluster.html). This will allow you to fully utilize the available resources.
+
+The AusNimbus builder allows you to configure a convenient `WEB_MEMORY` environment variable. The value should be set in MB to the expected memory requirements of your application.
+
+`WEB_CONCURRENCY` and `NODE_ARGS` will be automatically tuned based on your `WEB_MEMORY` value.
+
+NAME             | Description
+-----------------|-------------
+WEB_MEMORY       | Specify expected memory requirements of your application in MB (ie. 512)
+WEB_CONCURRENCY  | Automatically calculated variable based on `MEMORY_AVAILABLE / WEB_MEMORY`
+NODE_ARGS        | Arguments passed to the `node` command. By default this value will be automatically tune the environment based on your app instance size.
+
+#### Examples
 
 A simple example with `cluster`:
 
@@ -40,7 +130,7 @@ if (cluster.isMaster) {
 }
 ```
 
-Another example with [throng](https://github.com/hunterloftis/throng):
+Another example with [Throng](https://github.com/hunterloftis/throng):
 
 ```javascript
 var throng  = require('throng');
@@ -58,20 +148,78 @@ throng({
 });
 ```
 
-The AusNimbus builder provides you with a convenient `WEB_MEMORY` environment variable. The value should be set in MB to the expected memory requirements of your application.
+## Extending
 
-`WEB_CONCURRENCY` and `NODE_ARGS` will be automatically tuned based on your `WEB_MEMORY` value.
+AusNimbus builders are split into two stages:
 
-NAME             | Description
------------------|-------------
-WEB_MEMORY       | Specify expected memory requirements of your application in MB (ie. 512)
-WEB_CONCURRENCY  | Automatically calculated variable based on `MEMORY_AVAILABLE / WEB_MEMORY`
-NODE_ARGS        | Arguments passed to `node`. By default it will automatically tune the environment based on your memory limit.
+- Build
+- Runtime
 
-## Versions
+Both stages are completely extensible, allowing you to customize or completely overwrite each stage.
 
-The versions currently supported are:
+### Build Stage (assemble)
 
-- 4
-- 6
-- 8
+If you want to customize the build stage, you need to add the executable `.s2i/bin/assemble` file in your repository.
+
+This file should contain the logic required to build and install any dependencies your application requires.
+
+If you only want to extend the build stage, you may use this example:
+
+```sh
+#!/bin/bash
+
+echo "Logic to include before"
+
+# Run the default builder logic
+. /usr/libexec/s2i/assemble
+
+echo "Logic to include after"
+```
+
+### Runtime Stage (run)
+
+If you only want to change the executed command for the run stage you may the following environment variable.
+
+NAME        | Description
+------------|-------------
+APP_RUN     | Define a custom command to start your application. eg. `node server.js`
+
+**NOTE:** `APP_RUN` will overwrite any builder's runtime configuration (including the [Debug Mode](#Debug Mode) section)
+
+Alternatively you may customize or overwrite the entire runtime stage by including the executable file `.s2i/bin/run`
+
+This file should contain the logic required to execute your application.
+
+If you only want to extend the run stage, you may use this example:
+
+```sh
+#!/bin/bash
+
+echo "Logic to include before"
+
+# Run the default builder logic
+. /usr/libexec/s2i/run
+```
+
+As the run script executes every time your application is deployed, scaled or restarted it's recommended to keep avoid including complex logic which may delay the start-up process of your application.
+
+### Persistent Environment Variables
+
+The recommend approach is to set your environment variables in the AusNimbus dashboard.
+
+However it is possible to store environment variables in code using the `.s2i/environment` file.
+
+The file expects a key=value format eg.
+
+```
+KEY=VALUE
+FOO=BAR
+```
+
+## Debug Mode
+
+The AusNimbus builder provides a convenient environment variable to help you debug your application.
+
+NAME        | Description
+------------|-------------
+DEBUG       | When set to "TRUE", `nodemon` will be used to automatically reload the server while you work (default: "false"). Setting `DEBUG` to "TRUE" will also change the `NODE_ENV` default to "development" (if not explicitly set).
