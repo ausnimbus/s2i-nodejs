@@ -15,6 +15,7 @@ This document describes the behaviour and environment configuration when running
 - [Environment Configuration](#environment-configuration)
 - [Advanced](#advanced)
   - [Build Customization](#build-customization)
+    - [Running AusNimbus specific build steps](#running-ausnimbus-specific build-steps)
   - [Configuring npm](#configuring-npm)
   - [Application Concurrency](#application-concurrency)
     - [Examples](#examples)
@@ -89,6 +90,8 @@ If your application has custom build steps you would like to run you can use the
   "postinstall": "grunt build"
 }
 ```
+
+#### Running AusNimbus specific build steps
 
 If you would like to run specific scripts when deployed only on AusNimbus.
 
