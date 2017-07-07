@@ -6,6 +6,24 @@ The [AusNimbus](https://www.ausnimbus.com.au/) builder for Node.js provides a fa
 
 This document describes the behaviour and environment configuration when running your Node.js apps on AusNimbus.
 
+## Table of Contents
+
+- [Runtime Environments](#runtime-environments)
+- [Web Process](#web-process)
+- [Dependency Management](#dependency-management)
+  - [devDependencies](#devDependencies)
+- [Environment Configuration](#environment-configuration)
+- [Advanced](#advanced)
+  - [Build Customization](#build-customization)
+  - [Configuring npm](#configuring-npm)
+  - [Application Concurrency](#application-concurrency)
+    - [Examples](#examples)
+- [Extending](#extending)
+  - [Build Stage (assemble)](#build-stage-assemble)
+  - [Runtime Stage (run)](#runtime-stage-run)
+  - [Persistent Environment Variables](#persistent-environment-variables)
+- [Debug Mode](#debug-mode)
+
 ## Runtime Environments
 
 AusNimbus supports the latest stable release and each of the LTS releases.
@@ -20,7 +38,7 @@ Your application's web processes must bind to port `8080`.
 
 AusNimbus handles SSL termination at the load balancer.
 
-The builder will start your web process by executing `npm run start` or `yarn run start` (see [Dependency Management](#Dependency Management) below). Your start [`script`](https://docs.npmjs.com/misc/scripts) can be specified in your `package.json`.
+The builder will start your web process by executing `npm run start` or `yarn run start` (see [Dependency Management](#dependency-management) below). Your start [`script`](https://docs.npmjs.com/misc/scripts) can be specified in your `package.json`.
 
 For example:
 
