@@ -2,7 +2,8 @@
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python \
         make \
-        g++
+        g++ \
+        jq
 
 # Globally install nodemon before setting NPM_CONFIG_PREFIX
 RUN npm install -g nodemon && \
