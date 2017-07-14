@@ -29,7 +29,7 @@ if [ -f "yarn.lock" ]; then
   yarn install --pure-lockfile --ignore-engines
 
   if [[ "$ausnimbus_postbuild" != null ]]; then
-    echo "----> Running prebuild \"$ausnimbus_postbuild\" (yarn)"
+    echo "----> Running postbuild \"$ausnimbus_postbuild\" (yarn)"
     yarn run ausnimbus-postbuild
   fi
 else
@@ -42,7 +42,7 @@ else
   npm install
 
   if [[ "$ausnimbus_postbuild" != null ]]; then
-    echo "----> Running prebuild \"$ausnimbus_postbuild\" (npm)"
+    echo "----> Running postbuild \"$ausnimbus_postbuild\" (npm)"
     npm run ausnimbus-postbuild --if-present
   fi
 fi
