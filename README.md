@@ -72,10 +72,10 @@ Remember that including `devDependencies` will slow your entire deployment time,
 
 The following environment variables are available for you to configure your Node.js environment:
 
-NAME        | Description
-------------|-------------
-NODE_ENV    | Node.js environment (Default: "production")
-NODE_ARGS   | Arguments passed to the `node` command. By default this value will be automatically tune the environment based on the app instance size.
+NAME         | Description
+-------------|-------------
+NODE_ENV     | Node.js environment (Default: "production")
+NODE_OPTIONS | Arguments passed to the `node` command. By default this value will be automatically tune the environment based on the app instance size.
 
 ## Advanced
 
@@ -123,13 +123,13 @@ Due to the single-threaded design of Node.js, it doesn't fully take advantage of
 
 The AusNimbus builder allows you to configure a convenient `WEB_MEMORY` environment variable. The value should be set in MB to the expected memory requirements of your application.
 
-`WEB_CONCURRENCY` and `NODE_ARGS` will be automatically tuned based on your `WEB_MEMORY` value.
+`WEB_CONCURRENCY` and `NODE_OPTIONS` will be automatically tuned based on your `WEB_MEMORY` value.
 
 NAME             | Description
 -----------------|-------------
 WEB_MEMORY       | Specify expected memory requirements of your application in MB (ie. 512)
 WEB_CONCURRENCY  | Automatically calculated variable based on `MEMORY_AVAILABLE / WEB_MEMORY`
-NODE_ARGS        | Arguments passed to the `node` command. By default this value will be automatically tune the environment based on your app instance size.
+NODE_OPTIONS        | Arguments passed to the `node` command. By default this value will be automatically tune the environment based on your app instance size.
 
 #### Examples
 
